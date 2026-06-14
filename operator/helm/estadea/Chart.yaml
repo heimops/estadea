@@ -1,0 +1,60 @@
+apiVersion: v2
+name: estadea
+description: >
+  Kubernetes operator that automatically force-deletes pods stuck in
+  Terminating, Pending, Unknown or Failed state for longer than a configurable
+  grace period.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/heimops/estadea
+sources:
+  - https://github.com/heimops/estadea
+maintainers:
+  - name: Victor Rivera
+    email: vriverofernandez@gmail.com
+keywords:
+  - kubernetes
+  - operator
+  - pod
+  - cleanup
+  - terminating
+  - stuck-pods
+icon: https://raw.githubusercontent.com/heimops/estadea/main/docs/logo.png
+annotations:
+  artifacthub.io/operatorCapabilities: Basic Install
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/crds: |
+    - kind: PodReaper
+      version: v1alpha1
+      name: podreapers.reaper.estadea.io
+      displayName: Pod Reaper
+      description: >
+        Defines a set of rules for automatically cleaning up pods stuck in
+        Terminating, Pending, Unknown or Failed state.
+  artifacthub.io/crdsExamples: |
+    - apiVersion: reaper.estadea.io/v1alpha1
+      kind: PodReaper
+      metadata:
+        name: cluster-reaper
+      spec:
+        namespaces:
+          - default
+          - production
+        podStates:
+          - Terminating
+          - Unknown
+        graceTimeout: "5m"
+        checkInterval: "30s"
+    - apiVersion: reaper.estadea.io/v1alpha1
+      kind: PodReaper
+      metadata:
+        name: aggressive-reaper
+      spec:
+        podStates:
+          - Terminating
+        graceTimeout: "2m"
+        checkInterval: "15s"
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial release of estadea operator

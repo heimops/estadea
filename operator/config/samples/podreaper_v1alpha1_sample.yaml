@@ -1,0 +1,33 @@
+apiVersion: reaper.estadea.io/v1alpha1
+kind: PodReaper
+metadata:
+  name: cluster-reaper
+spec:
+  # Namespaces a vigilar. Omitir (o lista vacía) para vigilar todos los namespaces.
+  namespaces:
+    - default
+    - production
+    - staging
+
+  # Estados de pod que activan la limpieza.
+  # Valores posibles: Terminating, Pending, Unknown, Failed
+  podStates:
+    - Terminating
+    - Unknown
+
+  # Tiempo mínimo que el pod debe llevar en ese estado antes de eliminarlo.
+  graceTimeout: "5m"
+
+  # Con qué frecuencia escanea el operador en busca de pods atascados.
+  checkInterval: "30s"
+---
+# Ejemplo más agresivo: elimina Terminating tras 2 minutos, en todos los namespaces
+apiVersion: reaper.estadea.io/v1alpha1
+kind: PodReaper
+metadata:
+  name: aggressive-reaper
+spec:
+  podStates:
+    - Terminating
+  graceTimeout: "2m"
+  checkInterval: "15s"

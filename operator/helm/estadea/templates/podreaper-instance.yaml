@@ -1,0 +1,10 @@
+{{- if .Values.defaultPodReaper.enabled }}
+apiVersion: reaper.estadea.io/v1alpha1
+kind: PodReaper
+metadata:
+  name: {{ .Values.defaultPodReaper.name }}
+  labels:
+    {{- include "estadea.labels" . | nindent 4 }}
+spec:
+  {{- toYaml .Values.defaultPodReaper.spec | nindent 2 }}
+{{- end }}

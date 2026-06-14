@@ -1,0 +1,35 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: estadea-manager-role
+rules:
+  # PodReaper CRD
+  - apiGroups: ["reaper.estadea.io"]
+    resources: ["podreapers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["reaper.estadea.io"]
+    resources: ["podreapers/status"]
+    verbs: ["get", "update", "patch"]
+  - apiGroups: ["reaper.estadea.io"]
+    resources: ["podreapers/finalizers"]
+    verbs: ["update"]
+
+  # Pods — list/watch to find stuck pods, update to remove finalizers, delete to force-delete
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch", "update", "patch", "delete"]
+
+  # Namespaces — needed when spec.namespaces is empty (watch all)
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+
+  # Events — for recording controller events
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+
+  # Leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]

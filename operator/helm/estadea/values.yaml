@@ -1,0 +1,100 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/heimops/estadea
+  pullPolicy: IfNotPresent
+  tag: ""  # defaults to Chart.appVersion
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Namespace where the operator is deployed.
+# The CRD (PodReaper) is cluster-scoped and always installed.
+namespace:
+  create: true
+  name: estadea-system
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Enable leader election for HA deployments (recommended for production).
+leaderElect: true
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 64Mi
+  requests:
+    cpu: 10m
+    memory: 32Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# Liveness and readiness probes
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8081
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podAnnotations: {}
+
+podLabels: {}
+
+# Metrics service (exposes :8080/metrics for Prometheus scraping)
+metrics:
+  enabled: true
+  port: 8080
+  service:
+    type: ClusterIP
+    port: 8080
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    scrapeTimeout: 10s
+    labels: {}
+
+# CRD installation.
+# Set to false if you manage CRDs separately (e.g. with GitOps).
+crds:
+  install: true
+  keep: true  # keep CRDs on helm uninstall to preserve data
+
+# Optional: deploy a default PodReaper instance after installation.
+defaultPodReaper:
+  enabled: false
+  name: cluster-reaper
+  spec:
+    namespaces: []  # empty = all namespaces
+    podStates:
+      - Terminating
+    graceTimeout: "5m"
+    checkInterval: "30s"
