@@ -39,6 +39,69 @@ entries:
       artifacthub.io/license: Apache-2.0
       artifacthub.io/operatorCapabilities: Basic Install
     apiVersion: v2
+    appVersion: 0.1.2
+    created: "2026-06-14T21:42:42.942260543Z"
+    description: 'Kubernetes operator that automatically force-deletes pods stuck
+      in Terminating, Pending, Unknown or Failed state for longer than a configurable
+      grace period. '
+    digest: 707ddc20ce77778fa6227baadfb524ba7f9d6f10e068024a86a47e31e438660e
+    home: https://github.com/heimops/estadea
+    icon: https://raw.githubusercontent.com/heimops/estadea/main/docs/logo.svg
+    keywords:
+    - kubernetes
+    - operator
+    - pod
+    - cleanup
+    - terminating
+    - stuck-pods
+    maintainers:
+    - email: vriverofernandez@gmail.com
+      name: Victor Rivera
+    name: estadea
+    sources:
+    - https://github.com/heimops/estadea
+    type: application
+    urls:
+    - https://github.com/heimops/estadea/releases/download/estadea-0.1.2/estadea-0.1.2.tgz
+    version: 0.1.2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial release of estadea operator
+      artifacthub.io/crds: |
+        - kind: PodReaper
+          version: v1alpha1
+          name: podreapers.reaper.estadea.io
+          displayName: Pod Reaper
+          description: >
+            Defines a set of rules for automatically cleaning up pods stuck in
+            Terminating, Pending, Unknown or Failed state.
+      artifacthub.io/crdsExamples: |
+        - apiVersion: reaper.estadea.io/v1alpha1
+          kind: PodReaper
+          metadata:
+            name: cluster-reaper
+          spec:
+            namespaces:
+              - default
+              - production
+            podStates:
+              - Terminating
+              - Unknown
+            graceTimeout: "5m"
+            checkInterval: "30s"
+        - apiVersion: reaper.estadea.io/v1alpha1
+          kind: PodReaper
+          metadata:
+            name: aggressive-reaper
+          spec:
+            podStates:
+              - Terminating
+            graceTimeout: "2m"
+            checkInterval: "15s"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/operatorCapabilities: Basic Install
+    apiVersion: v2
     appVersion: 0.1.1
     created: "2026-06-14T19:40:51.102436119Z"
     description: 'Kubernetes operator that automatically force-deletes pods stuck
@@ -64,4 +127,4 @@ entries:
     urls:
     - https://github.com/heimops/estadea/releases/download/estadea-0.1.1/estadea-0.1.1.tgz
     version: 0.1.1
-generated: "2026-06-14T19:40:51.102441419Z"
+generated: "2026-06-14T21:42:42.942268876Z"
