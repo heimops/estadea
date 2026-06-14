@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'operator/helm/estadea/**'
+      - 'docs/**'
 
 jobs:
   release:
@@ -34,12 +35,12 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      # Copy artifacthub-repo.yml to gh-pages so ArtifactHub can verify ownership
-      - name: Publish artifacthub-repo.yml to gh-pages
+      - name: Publish docs and metadata to gh-pages
         run: |
-          git fetch origin gh-pages || true
-          git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages
-          cp operator/helm/artifacthub-repo.yml .
-          git add artifacthub-repo.yml
-          git diff --cached --quiet || git commit -m "chore: update artifacthub-repo.yml"
+          git fetch origin gh-pages
+          git checkout gh-pages
+          cp $GITHUB_WORKSPACE/docs/index.html .
+          cp $GITHUB_WORKSPACE/operator/helm/artifacthub-repo.yml .
+          git add index.html artifacthub-repo.yml
+          git diff --cached --quiet || git commit -m "chore: update docs and artifacthub metadata"
           git push origin gh-pages
