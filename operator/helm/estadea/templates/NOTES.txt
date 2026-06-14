@@ -1,0 +1,33 @@
+Estadea operator has been installed successfully!
+
+Operator namespace : {{ include "estadea.namespace" . }}
+Image              : {{ include "estadea.image" . }}
+
+To verify the operator is running:
+  kubectl get pods -n {{ include "estadea.namespace" . }}
+
+To create a PodReaper instance that cleans up stuck Terminating pods
+across all namespaces after 5 minutes:
+
+  kubectl apply -f - <<EOF
+  apiVersion: reaper.estadea.io/v1alpha1
+  kind: PodReaper
+  metadata:
+    name: cluster-reaper
+  spec:
+    podStates:
+      - Terminating
+    graceTimeout: "5m"
+    checkInterval: "30s"
+  EOF
+
+List all PodReaper instances:
+  kubectl get podreaper   (or: kubectl get pr)
+
+{{- if .Values.metrics.enabled }}
+
+Metrics are exposed on port {{ .Values.metrics.port }} of the manager pod.
+{{- if .Values.metrics.serviceMonitor.enabled }}
+A ServiceMonitor has been created for Prometheus scraping.
+{{- end }}
+{{- end }}

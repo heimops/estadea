@@ -1,0 +1,155 @@
+{{- if .Values.crds.install }}
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: podreapers.reaper.estadea.io
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+    {{- if .Values.crds.keep }}
+    helm.sh/resource-policy: keep
+    {{- end }}
+  labels:
+    {{- include "estadea.labels" . | nindent 4 }}
+spec:
+  group: reaper.estadea.io
+  names:
+    kind: PodReaper
+    listKind: PodReaperList
+    plural: podreapers
+    singular: podreaper
+    shortNames:
+      - pr
+  scope: Cluster
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Namespaces
+          type: string
+          jsonPath: .spec.namespaces
+          description: Namespaces watched
+        - name: States
+          type: string
+          jsonPath: .spec.podStates
+          description: Pod states triggering cleanup
+        - name: Grace
+          type: string
+          jsonPath: .spec.graceTimeout
+          description: Minimum stuck time
+        - name: Deleted
+          type: integer
+          jsonPath: .status.totalPodsDeleted
+          description: Total pods deleted
+        - name: Last Run
+          type: date
+          jsonPath: .status.lastRunTime
+      schema:
+        openAPIV3Schema:
+          description: PodReaper is the Schema for the podreapers API.
+          type: object
+          properties:
+            apiVersion:
+              description: APIVersion defines the versioned schema of this representation of an object.
+              type: string
+            kind:
+              description: Kind is a string value representing the REST resource this object represents.
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: PodReaperSpec defines the desired state of PodReaper.
+              type: object
+              required:
+                - graceTimeout
+              properties:
+                namespaces:
+                  description: >
+                    Namespaces to watch. Empty slice means all namespaces.
+                  type: array
+                  items:
+                    type: string
+                podStates:
+                  description: >
+                    Pod states that qualify for forced deletion.
+                    Valid values: Terminating, Pending, Unknown, Failed.
+                  type: array
+                  default:
+                    - Terminating
+                  items:
+                    type: string
+                    enum:
+                      - Terminating
+                      - Pending
+                      - Unknown
+                      - Failed
+                graceTimeout:
+                  description: >
+                    Minimum time a pod must remain in a qualifying state before
+                    being force-deleted. Must be a valid Go duration (e.g. "5m", "1h30m").
+                  type: string
+                  default: "5m"
+                  pattern: '^([0-9]+h)?([0-9]+m)?([0-9]+s)?$'
+                checkInterval:
+                  description: >
+                    How often the operator scans for stuck pods.
+                    Must be a valid Go duration (e.g. "30s", "2m").
+                  type: string
+                  default: "30s"
+                  pattern: '^([0-9]+h)?([0-9]+m)?([0-9]+s)?$'
+            status:
+              description: PodReaperStatus defines the observed state of PodReaper.
+              type: object
+              properties:
+                lastRunTime:
+                  description: Timestamp of the most recent reconciliation sweep.
+                  type: string
+                  format: date-time
+                totalPodsDeleted:
+                  description: Cumulative count of pods force-deleted by this reaper.
+                  type: integer
+                  format: int64
+                conditions:
+                  description: Latest available observations of the PodReaper state.
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - type
+                  x-kubernetes-list-type: map
+                  items:
+                    description: Condition contains details for one aspect of the current state.
+                    type: object
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    properties:
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
+                      message:
+                        type: string
+                        maxLength: 32768
+                      observedGeneration:
+                        type: integer
+                        format: int64
+                        minimum: 0
+                      reason:
+                        type: string
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: '^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$'
+                      status:
+                        type: string
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                      type:
+                        type: string
+                        maxLength: 316
+                        pattern: '^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$'
+{{- end }}

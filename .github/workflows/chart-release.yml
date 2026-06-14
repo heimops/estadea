@@ -1,0 +1,45 @@
+name: Release Helm Chart
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'operator/helm/estadea/**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          charts_dir: operator/helm
+          config: .cr.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      # Copy artifacthub-repo.yml to gh-pages so ArtifactHub can verify ownership
+      - name: Publish artifacthub-repo.yml to gh-pages
+        run: |
+          git fetch origin gh-pages || true
+          git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages
+          cp operator/helm/artifacthub-repo.yml .
+          git add artifacthub-repo.yml
+          git diff --cached --quiet || git commit -m "chore: update artifacthub-repo.yml"
+          git push origin gh-pages
