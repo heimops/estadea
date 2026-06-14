@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background -->
+  <circle cx="100" cy="100" r="96" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+
+  <!-- Hexagon -->
+  <polygon
+    points="100,22 168,61 168,139 100,178 32,139 32,61"
+    fill="none"
+    stroke="#58a6ff"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Spokes center → outer nodes -->
+  <line x1="100" y1="86"  x2="100" y2="46"  stroke="#58a6ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="112" y1="93"  x2="148" y2="72"  stroke="#58a6ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="112" y1="107" x2="148" y2="128" stroke="#58a6ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="100" y1="114" x2="100" y2="154" stroke="#58a6ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="88"  y1="107" x2="52"  y2="128" stroke="#58a6ff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="88"  y1="93"  x2="52"  y2="72"  stroke="#58a6ff" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Outer nodes -->
+  <circle cx="100" cy="38"  r="9" fill="#3fb950"/>
+  <circle cx="155" cy="69"  r="9" fill="#3fb950"/>
+  <circle cx="155" cy="131" r="9" fill="#3fb950"/>
+  <circle cx="100" cy="162" r="9" fill="#3fb950"/>
+  <circle cx="45"  cy="131" r="9" fill="#3fb950"/>
+  <circle cx="45"  cy="69"  r="9" fill="#3fb950"/>
+
+  <!-- Center node -->
+  <circle cx="100" cy="100" r="15" fill="#58a6ff"/>
+</svg>
