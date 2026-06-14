@@ -20,7 +20,7 @@ keywords:
   - cleanup
   - terminating
   - stuck-pods
-icon: https://raw.githubusercontent.com/heimops/estadea/main/docs/logo.png
+icon: https://raw.githubusercontent.com/heimops/estadea/main/docs/logo.svg
 annotations:
   artifacthub.io/operatorCapabilities: Basic Install
   artifacthub.io/license: Apache-2.0
